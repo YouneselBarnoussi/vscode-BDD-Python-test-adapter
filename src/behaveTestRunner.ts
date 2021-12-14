@@ -14,8 +14,8 @@ export class behaveTestRunner{
 
 	constructor(workspaceRoot : vscode.Uri, logger: Log){
 		this.testExecutions = new Map<string, ProcessExecution>();
-		this.loadScriptConfiguration = new ScriptConfiguration(['behave'], workspaceRoot.fsPath, ['--dry-run'], {shell: process.env.ComSpec});
-		this.runScriptConfiguration = new ScriptConfiguration(['behave'], workspaceRoot.fsPath, ['-n'], {shell: process.env.ComSpec})
+		this.loadScriptConfiguration = new ScriptConfiguration(['python -m behave'], workspaceRoot.fsPath, ['--dry-run'], {shell: process.env.ComSpec});
+		this.runScriptConfiguration = new ScriptConfiguration(['python -m behave'], workspaceRoot.fsPath, ['-n'], {shell: process.env.ComSpec})
 		this.logger = logger;
 		this.testSuite = {
 			type: 'suite',
