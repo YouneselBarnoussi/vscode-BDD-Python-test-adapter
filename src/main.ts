@@ -1,34 +1,24 @@
 import * as vscode from 'vscode';
-import { TestHub, testExplorerExtensionId } from 'vscode-test-adapter-api';
-import { Log, TestAdapterRegistrar } from 'vscode-test-adapter-util';
-import { BehaveTestAdapter } from './behaveTestAdapter';
-import { behaveTestRunner } from './behaveTestRunner';
-import {BehaveDefinitionProvider} from './behaveDefinitionProvider';
+import { loadTests } from './loadTests';
+import { runTests } from './runTests';
+import { BehaveDefinitionProvider } from './behaveDefinitionProvider';
 
 export async function activate(context: vscode.ExtensionContext) {
+	const controller = vscode.tests.createTestController('behave-test-adapter', 'Behave test controller');
 
-	const workspaceFolder = (vscode.workspace.workspaceFolders || [])[0];
+	context.subscriptions.push(controller);
 
-	// create a simple logger that can be configured with the configuration variables
-	// `exampleExplorer.logpanel` and `exampleExplorer.logfile`
-	const log = new Log('beahaveExplorer', workspaceFolder, 'Behave Explorer Log');
-	context.subscriptions.push(log);
+	controller.resolveHandler = async test => {
+		controller.items.replace(await loadTests(controller));
+	};
 
-	// get the Test Explorer extension
-	const testExplorerExtension = vscode.extensions.getExtension<TestHub>(testExplorerExtensionId);
-	if (log.enabled) log.info(`Test Explorer ${testExplorerExtension ? '' : 'not '}found`);
+	controller.createRunProfile('Run', vscode.TestRunProfileKind.Run, async request => await runTests(controller, request), true);
+	controller.createRunProfile('Debug', vscode.TestRunProfileKind.Debug, async request => await runTests(controller, request, true), true);
 
-	if (testExplorerExtension) {
-		const testHub = testExplorerExtension.exports;
-
-		// this will register an TestAdapater for each WorkspaceFolder
-		context.subscriptions.push(new TestAdapterRegistrar(
-			testHub,
-			workspaceFolder => new BehaveTestAdapter(workspaceFolder, log, new behaveTestRunner(workspaceFolder.uri, log)),
-			log
-		));
-		
-		const definitionProviderDisposable = vscode.languages.registerDefinitionProvider({pattern: '**/*.feature'}, new BehaveDefinitionProvider(workspaceFolder.uri));
-		context.subscriptions.push(definitionProviderDisposable);
-	}
+	context.subscriptions.push(
+		vscode.languages.registerDefinitionProvider(
+			{pattern: '**/*.feature'},
+			new BehaveDefinitionProvider((vscode.workspace.workspaceFolders || [])[0].uri),
+		),
+	);
 }

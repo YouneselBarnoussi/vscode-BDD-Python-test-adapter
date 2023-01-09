@@ -8,7 +8,7 @@ export class BehaveDefinitionProvider implements vscode.DefinitionProvider{
     public steps: KeyStep;
 
     constructor(workspaceUri: vscode.Uri){
-        this.loadScriptConfiguration = new ScriptConfiguration(['cd', 'behave'], workspaceUri.fsPath, ['--dry-run'], {shell: process.env.ComSpec});
+        this.loadScriptConfiguration = new ScriptConfiguration(['python -m behave'], workspaceUri.fsPath, ['--dry-run'], {shell: process.env.ComSpec})
         this.steps = {};
         this.getSteps(workspaceUri.fsPath).then(e => {
             this.steps = e;
@@ -48,7 +48,6 @@ export class BehaveDefinitionProvider implements vscode.DefinitionProvider{
                 if (outputByLine[j].includes('Then') || outputByLine[j].includes('Given') || outputByLine[j].includes('When') || outputByLine[j].includes('And')) {
                     let line = outputByLine[j].split(/[:#]/);
 
-                    
                     if(line.length === 3){
                         let label: string = line[0].trim();
                         let filePath = workspacePath + '/' + line[1].trim();

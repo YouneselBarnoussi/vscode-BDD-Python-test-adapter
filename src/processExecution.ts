@@ -2,11 +2,14 @@ import { ChildProcess, spawn } from 'child_process';
 import {ScriptConfiguration} from './scriptConfiguration';
 import * as iconv from 'iconv-lite';
 import { EOL } from 'os';
+import { timer } from './timer';
 
 export class ProcessExecution {
     public readonly pid: number;
 
     private readonly process: ChildProcess;
+
+    private readonly timer;
 
     constructor(
         args: string[],
@@ -22,18 +25,17 @@ export class ProcessExecution {
                 ...configuration.options,
             });
         this.pid = this.process.pid;
+        this.timer = timer();
     }
 
-
-    public async complete(): Promise<{ exitCode: number | null; output: string; }> {
-        return new Promise<{ exitCode: number | null, output: string }>((resolve, reject) => {
+    public async complete(): Promise<{ exitCode: number | null; output: string; duration: number; }> {
+        return new Promise<{ exitCode: number | null, output: string; duration: number; }>((resolve, reject) => {
             const stdoutBuffer: Buffer[] = [];
             const stderrBuffer: Buffer[] = [];
             this.process.stdout!.on('data', chunk => stdoutBuffer.push(chunk));
             this.process.stderr!.on('data', chunk => stderrBuffer.push(chunk));
 
             this.process.once('exit', exitCode => {
-                
                 if(exitCode === null && this.process.killed){
                     reject({exitCode: exitCode, message: `process cancelled`});
                 }
@@ -46,7 +48,10 @@ export class ProcessExecution {
                         reject(`process returned an error:${EOL}${decode(stderrBuffer)}`);
                     }
                 }
-                resolve({exitCode, output });
+
+                const duration = this.timer.ms;
+
+                resolve({exitCode, output, duration});
             });
 
             this.process.once('error', error => {
