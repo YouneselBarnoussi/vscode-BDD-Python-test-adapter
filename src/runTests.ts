@@ -1,34 +1,34 @@
 import * as vscode from 'vscode';
-import { runScript } from './processExecution';
-import { ScriptConfiguration } from './scriptConfiguration';
+import {ScriptConfiguration} from './scriptConfiguration';
+import {runScript} from './processExecution';
 
 export async function runTests(
     controller: vscode.TestController,
-	request: vscode.TestRunRequest,
+    request: vscode.TestRunRequest,
     debug: boolean = false,
 ): Promise<void> {
     const run = controller.createTestRun(request);
 
-	if (request.include) {
-		await Promise.all(request.include.map(t => debug ? debugNode(t, request, run) : runNode(t, request, run)));
-	} else {
-		await Promise.all(mapTestItems(controller.items, t => debug ? debugNode(t, request, run) : runNode(t, request, run)));
-	}
+    if (request.include) {
+        await Promise.all(request.include.map((t: vscode.TestItem) => debug ? debugNode(t, request, run) : runNode(t, request, run)));
+    } else {
+        await Promise.all(mapTestItems(controller.items, (t: vscode.TestItem) => debug ? debugNode(t, request, run) : runNode(t, request, run)));
+    }
 
-	run.end();
+    run.end();
 }
 
 async function runNode(
-	node: vscode.TestItem,
-	request: vscode.TestRunRequest,
-	run: vscode.TestRun,
+    node: vscode.TestItem,
+    request: vscode.TestRunRequest,
+    run: vscode.TestRun,
 ): Promise<void> {
     if (request.exclude?.includes(node)) {
-		return;
-	}
+        return;
+    }
 
     if (node.children.size > 0) {
-        await Promise.all(mapTestItems(node.children, t => runNode(t, request, run)));
+        await Promise.all(mapTestItems(node.children, (t: vscode.TestItem)=> runNode(t, request, run)));
     } else {
         run.started(node);
 
@@ -36,8 +36,8 @@ async function runNode(
             const workspacePath = (vscode.workspace.workspaceFolders || [])[0]?.uri?.fsPath ?? '';
             const runScriptConfiguration = new ScriptConfiguration(['python -m behave'], workspacePath, ['-n'], {shell: process.env.ComSpec});
 
-            let testExecution = runScript(runScriptConfiguration, [`"${node.uri?.fsPath}"`.replace(/\\/g, '\\\\'), '-n', `"${node.label}"`])
-            let result = await testExecution.complete();
+            const testExecution = runScript(runScriptConfiguration, [`"${node.uri?.fsPath}"`.replace(/\\/g, '\\\\'), '-n', `"${node.label}"`]);
+            const result = await testExecution.complete();
             if(result.exitCode === 0){
                 run.passed(node, result.duration);
             }else{
@@ -54,27 +54,27 @@ async function runNode(
 }
 
 async function debugNode(
-	node: vscode.TestItem,
-	request: vscode.TestRunRequest,
-	run: vscode.TestRun,
+    node: vscode.TestItem,
+    request: vscode.TestRunRequest,
+    run: vscode.TestRun,
 ): Promise<void> {
     if (request.exclude?.includes(node)) {
-		return;
-	}
+        return;
+    }
 
     vscode.debug.startDebugging((vscode.workspace.workspaceFolders || [])[0], {
-            name: `Debug ${node.label}`,
-            type: 'python',
-            request: 'launch',
-            module: 'behave',
-            console: 'internalConsole',
-            cwd: '${workspaceFolder}',
-            args: [
-                `${node.uri?.fsPath}`,
-                '-n',
-                `${node.id}`
-            ]
-        },
+        name: `Debug ${node.label}`,
+        type: 'python',
+        request: 'launch',
+        module: 'behave',
+        console: 'internalConsole',
+        cwd: '${workspaceFolder}',
+        args: [
+            `${node.uri?.fsPath}`,
+            '-n',
+            `${node.id}`
+        ]
+    },
     );
 
     // TODO: Figure out a way to see if the test was succesfull using the debug session.
@@ -82,7 +82,7 @@ async function debugNode(
 }
 
 const mapTestItems = <T>(items: vscode.TestItemCollection, mapper: (t: vscode.TestItem) => T): T[] => {
-	const result: T[] = [];
-	items.forEach(t => result.push(mapper(t)));
-	return result;
-}
+    const result: T[] = [];
+    items.forEach((t: vscode.TestItem) => result.push(mapper(t)));
+    return result;
+};

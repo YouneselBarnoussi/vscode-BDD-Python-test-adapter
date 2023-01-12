@@ -1,11 +1,11 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { parseTestSuites } from '../../loadTests';
+import {parseTestSuites} from '../../loadTests';
 
 suite('loadTests.ts', () => {
-	vscode.window.showInformationMessage('Start loadTest tests.');
+    vscode.window.showInformationMessage('Start loadTest tests.');
 
-	test('It parses a test suite', async () => {
+    test('It parses a test suite', async () => {
         const controller = vscode.tests.createTestController('load-test-controller', 'Controller used in testing load tests');
 
         const output = `
@@ -25,14 +25,14 @@ suite('loadTests.ts', () => {
 
         const tests = await parseTestSuites(controller, output, __dirname + '/support');
 
-		assert.strictEqual(
-			tests.length,
+        assert.strictEqual(
+            tests.length,
             1
-		);
-		assert.strictEqual(
-			tests[0].children.size,
+        );
+        assert.strictEqual(
+            tests[0].children.size,
             2
-		);
+        );
 
         assert.strictEqual(
             tests[0].label,
@@ -48,5 +48,5 @@ suite('loadTests.ts', () => {
             tests[0].children.get('The printer will go in Error state when an invalid document is provided') !== undefined,
             true,
         );
-	});
+    });
 });
