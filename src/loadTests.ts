@@ -5,7 +5,7 @@ import { ScriptConfiguration } from './scriptConfiguration';
 
 export async function loadTests(controller: vscode.TestController) {
 	try {
-		const workspacePath = (vscode.workspace.workspaceFolders || [])[0].uri.fsPath;
+		const workspacePath = (vscode.workspace.workspaceFolders || [])[0]?.uri?.fsPath ?? '';
         const loadScriptConfiguration = new ScriptConfiguration(['python -m behave'], workspacePath, ['--dry-run'], {shell: process.env.ComSpec})
 
 		let result = await runScript(loadScriptConfiguration).complete();
@@ -16,7 +16,7 @@ export async function loadTests(controller: vscode.TestController) {
 	}
 }
 
-async function parseTestSuites(controller: vscode.TestController, output: string, workspacePath :string):  Promise<vscode.TestItem[]>{
+export async function parseTestSuites(controller: vscode.TestController, output: string, workspacePath :string):  Promise<vscode.TestItem[]>{
 	let features: vscode.TestItem[] = [];
 
 	let outputByLine: string[] = output.split('\n').filter(Boolean);

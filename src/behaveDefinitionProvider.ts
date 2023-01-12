@@ -8,9 +8,9 @@ export class BehaveDefinitionProvider implements vscode.DefinitionProvider{
     public steps: KeyStep;
 
     constructor(workspaceUri: vscode.Uri){
-        this.loadScriptConfiguration = new ScriptConfiguration(['python -m behave'], workspaceUri.fsPath, ['--dry-run'], {shell: process.env.ComSpec})
+        this.loadScriptConfiguration = new ScriptConfiguration(['python -m behave'], undefined, ['--dry-run'], {shell: process.env.ComSpec})
         this.steps = {};
-        this.getSteps(workspaceUri.fsPath).then(e => {
+        this.getSteps(workspaceUri?.fsPath ?? '').then(e => {
             this.steps = e;
         })
     }

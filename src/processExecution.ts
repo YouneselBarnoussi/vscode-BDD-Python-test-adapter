@@ -2,7 +2,7 @@ import { ChildProcess, spawn } from 'child_process';
 import {ScriptConfiguration} from './scriptConfiguration';
 import * as iconv from 'iconv-lite';
 import { EOL } from 'os';
-import { timer } from './timer';
+import { Timer } from './timer';
 
 export class ProcessExecution {
     public readonly pid: number;
@@ -25,7 +25,8 @@ export class ProcessExecution {
                 ...configuration.options,
             });
         this.pid = this.process.pid;
-        this.timer = timer();
+        this.timer = new Timer();
+        this.timer.start();
     }
 
     public async complete(): Promise<{ exitCode: number | null; output: string; duration: number; }> {

@@ -18,7 +18,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.languages.registerDefinitionProvider(
 			{pattern: '**/*.feature'},
-			new BehaveDefinitionProvider((vscode.workspace.workspaceFolders || [])[0].uri),
+			new BehaveDefinitionProvider((vscode.workspace.workspaceFolders || [])[0]?.uri),
 		),
 	);
 }

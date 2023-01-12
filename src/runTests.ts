@@ -33,7 +33,7 @@ async function runNode(
         run.started(node);
 
         try {
-            const workspacePath = (vscode.workspace.workspaceFolders || [])[0].uri.fsPath;
+            const workspacePath = (vscode.workspace.workspaceFolders || [])[0]?.uri?.fsPath ?? '';
             const runScriptConfiguration = new ScriptConfiguration(['python -m behave'], workspacePath, ['-n'], {shell: process.env.ComSpec});
 
             let testExecution = runScript(runScriptConfiguration, [`"${node.uri?.fsPath}"`.replace(/\\/g, '\\\\'), '-n', `"${node.label}"`])
