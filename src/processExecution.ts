@@ -1,19 +1,20 @@
-import { ChildProcess, spawn } from 'child_process';
-import {ScriptConfiguration} from './scriptConfiguration';
 import * as iconv from 'iconv-lite';
-import { EOL } from 'os';
+import {ChildProcess, spawn} from 'child_process';
+import {EOL} from 'os';
+import {ScriptConfiguration} from './scriptConfiguration';
+import {Timer} from './timer';
 
 export class ProcessExecution {
     public readonly pid: number;
 
     private readonly process: ChildProcess;
 
+    private readonly timer;
+
     constructor(
         args: string[],
         configuration: ScriptConfiguration,
-        value?: string,
-        filePath?: string
-    ) { 
+    ) {
         this.process = spawn(
             configuration.getCommands(),
             args,
@@ -22,18 +23,26 @@ export class ProcessExecution {
                 ...configuration.options,
             });
         this.pid = this.process.pid;
+        this.timer = new Timer();
+        this.timer.start();
     }
 
-
-    public async complete(): Promise<{ exitCode: number | null; output: string; }> {
-        return new Promise<{ exitCode: number | null, output: string }>((resolve, reject) => {
+    public async complete(): Promise<{ exitCode: number | null; output: string; duration: number }> {
+        return new Promise<{ exitCode: number | null; output: string; duration: number }>((resolve: (value: {
+            exitCode: number | null;
+            output: string;
+            duration: number;
+        } | PromiseLike<{
+            exitCode: number | null;
+            output: string;
+            duration: number;
+        }>) => void, reject: (reason?: any) => void) => {
             const stdoutBuffer: Buffer[] = [];
             const stderrBuffer: Buffer[] = [];
-            this.process.stdout!.on('data', chunk => stdoutBuffer.push(chunk));
-            this.process.stderr!.on('data', chunk => stderrBuffer.push(chunk));
+            this.process.stdout!.on('data', (chunk: any) => stdoutBuffer.push(chunk));
+            this.process.stderr!.on('data', (chunk: any) => stderrBuffer.push(chunk));
 
-            this.process.once('exit', exitCode => {
-                
+            this.process.once('exit', (exitCode: number | null) => {
                 if(exitCode === null && this.process.killed){
                     reject({exitCode: exitCode, message: `process cancelled`});
                 }
@@ -46,10 +55,13 @@ export class ProcessExecution {
                         reject(`process returned an error:${EOL}${decode(stderrBuffer)}`);
                     }
                 }
-                resolve({exitCode, output });
+
+                const duration = this.timer.ms;
+
+                resolve({exitCode, output, duration});
             });
 
-            this.process.once('error', error => {
+            this.process.once('error', (error: Error) => {
                 reject(`Error occurred during process execution: ${error}`);
             });
         });
@@ -65,7 +77,7 @@ function run(
     configuration: ScriptConfiguration,
     extraArguments: string[]
 ): ProcessExecution {
-    let allArgs = args.concat(extraArguments);
+    const allArgs = args.concat(extraArguments);
     return new ProcessExecution(allArgs, configuration);
 }
 
@@ -73,6 +85,6 @@ export function runScript(configuration: ScriptConfiguration, extraArguments?: (
     return run(configuration.args || [], configuration, extraArguments as string[]);
 }
 
-function decode(buffers: Buffer[]) {
+function decode(buffers: Buffer[]): string {
     return iconv.decode(Buffer.concat(buffers), 'utf8');
 }
