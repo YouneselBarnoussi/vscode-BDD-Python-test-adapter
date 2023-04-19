@@ -9,7 +9,6 @@ This extension allows you to run Python [Behave](https://github.com/behave/behav
 * Shows a failed test's log when the test is selected in the explorer
 * Shows step definition in feature file on ctrl+click and/or F12.
 
-
 ## Getting started
 
 * Install the extension and restart VS Code
