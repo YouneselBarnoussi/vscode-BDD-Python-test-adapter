@@ -21,4 +21,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             new BehaveDefinitionProvider((vscode.workspace.workspaceFolders || [])[0]?.uri),
         ),
     );
+
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeConfiguration(async (e: vscode.ConfigurationChangeEvent) => {
+            if (e.affectsConfiguration('python')) {
+                controller.items.replace(await loadTests(controller));
+            }
+        })
+    );
 }

@@ -34,7 +34,7 @@
     "rebuild": "npm run clean && npm run build",
     "package": "vsce package",
     "publish": "vsce publish",
-    "pretest": "npm run build && copyfiles -u 1 ./src/test/suite/support/features/print.feature ./out",
+    "pretest": "copyfiles -u 1 ./src/test/suite/support/features/print.feature ./out && copyfiles -u 1 ./src/test/suite/support/.vscode/settings.json ./out && npm run build",
     "test": "node ./out/test/runTests.js",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix"
