@@ -17,6 +17,11 @@ This extension allows you to run Python [Behave](https://github.com/behave/behav
 
 If there is no python interpreter defined in Visual Studio Code the global python interpreter will be used.
 
+
+https://user-images.githubusercontent.com/16510310/233095006-918a8134-bfc3-4b32-bd16-4ba396ff5ac3.mp4
+
+
+
 ## Configuration
 
 The following configuration properties are available
