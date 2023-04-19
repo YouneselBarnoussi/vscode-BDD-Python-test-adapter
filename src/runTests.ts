@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
+import {getFeaturesFolder, getInterpreter} from './helpers';
 import {ScriptConfiguration} from './scriptConfiguration';
-import {getInterpreter} from './helpers';
 import {runScript} from './processExecution';
 
 export async function runTests(
@@ -36,7 +36,7 @@ async function runNode(
         try {
             const workspacePath = (vscode.workspace.workspaceFolders || [])[0]?.uri?.fsPath ?? '';
 
-            const runScriptConfiguration = new ScriptConfiguration([`${getInterpreter()} -m behave`], workspacePath, ['-n'], {shell: process.env.ComSpec});
+            const runScriptConfiguration = new ScriptConfiguration([`${getInterpreter()} -m behave ${getFeaturesFolder()}`], workspacePath, ['-n'], {shell: process.env.ComSpec});
 
             const testExecution = runScript(runScriptConfiguration, [`"${node.uri?.fsPath}"`.replace(/\\/g, '\\\\'), '-n', `"${node.label}"`]);
             const result = await testExecution.complete();

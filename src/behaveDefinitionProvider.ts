@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
+import {getFeaturesFolder, getInterpreter} from './helpers';
 import {KeyStep} from './keyStepArray';
 import {ScriptConfiguration} from './scriptConfiguration';
-import {getInterpreter} from './helpers';
 import {runScript} from './processExecution';
 
 export class BehaveDefinitionProvider implements vscode.DefinitionProvider{
@@ -9,7 +9,7 @@ export class BehaveDefinitionProvider implements vscode.DefinitionProvider{
     public steps: KeyStep;
 
     constructor(workspaceUri: vscode.Uri){
-        this.loadScriptConfiguration = new ScriptConfiguration([`${getInterpreter()} -m behave`], undefined, ['--dry-run'], {shell: process.env.ComSpec});
+        this.loadScriptConfiguration = new ScriptConfiguration([`${getInterpreter()} -m behave ${getFeaturesFolder()}`], undefined, ['--dry-run'], {shell: process.env.ComSpec});
         this.steps = {};
         this.getSteps(workspaceUri?.fsPath ?? '').then((e: KeyStep) => {
             this.steps = e;

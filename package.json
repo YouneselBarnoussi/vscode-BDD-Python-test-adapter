@@ -24,7 +24,8 @@
     "python",
     "behave",
     "BDD",
-    "Behave Driven Development"
+    "Behave Driven Development",
+    "debug"
   ],
   "main": "out/main.js",
   "scripts": {
@@ -68,6 +69,22 @@
     "vscode": "^1.59.0"
   },
   "activationEvents": [
-    "*"
-  ]
+		"workspaceContains:**/*.feature"
+  ],
+	"extensionDependencies": [
+		"ms-python.python"
+	],
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Test explorer for Python Behave Driven Development",
+      "properties": {
+          "behaveTestAdapter.featuresFolderPath": {
+              "type": "string",
+              "default": "",
+              "description": "The folder of the features folder (default: ${workspaceFolder}/features)"
+          }
+      }
+    }
+  }
 }
