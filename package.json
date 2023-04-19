@@ -82,7 +82,7 @@
           "behaveTestAdapter.featuresFolderPath": {
               "type": "string",
               "default": "",
-              "description": "The folder of the features folder (default: ${workspaceFolder}/features)"
+              "description": "The path of the features folder (default: ${workspaceFolder}/features)"
           }
       }
     }

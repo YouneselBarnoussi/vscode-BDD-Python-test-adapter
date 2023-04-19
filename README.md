@@ -1,6 +1,6 @@
 # Python Behave Test Explorer for Visual Studio Code
 
-This extension allows you to run Python [Behave](https://github.com/behave/behave) tests using the [Test Explorer UI](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-test-explorer).
+This extension allows you to run Python [Behave](https://github.com/behave/behave) tests in the Visual Studio Code test explorer.
 
 ## Features
 
@@ -9,11 +9,22 @@ This extension allows you to run Python [Behave](https://github.com/behave/behav
 * Shows a failed test's log when the test is selected in the explorer
 * Shows step definition in feature file on ctrl+click and/or F12.
 
+
 ## Getting started
 
 * Install the extension and restart VS Code
 * Open the test view
-* Run your tests using the ![Run](img/run-button.png) icon in the Test Explorer
+* Run your tests using the run icon in the Test Explorer
+
+If there is no python interpreter defined in Visual Studio Code the global python interpreter will be used.
+
+## Configuration
+
+The following configuration properties are available
+
+| Key | Description | Default |
+| ------------- |:-------------:| -----:|
+| behaveTestAdapter.featuresFolderPath | The path of the features folder | ${workspaceFolder}/features
 
 ## Questions, issues, feature requests, and contributions
 
