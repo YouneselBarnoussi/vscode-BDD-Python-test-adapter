@@ -15,23 +15,27 @@ export class BehaveDefinitionProvider implements vscode.DefinitionProvider{
     }
 
     provideDefinition(document: vscode.TextDocument, position: vscode.Position, _token: vscode.CancellationToken): vscode.ProviderResult<vscode.Definition> {
-        const line = document.lineAt(position.line).text.trim();
+        if (vscode.workspace.getConfiguration('behaveTestAdapter').get('enableDefintionProvider', true)) {
+            const line = document.lineAt(position.line).text.trim();
 
-        if(line.includes('Then') || line.includes('Given') || line.includes('When') || line.includes('And')){
-            const regex = /'(.*?)'/g;
-            let formattedLine = line.replace(regex, '');
-            formattedLine = formattedLine.trim();
+            if(line.includes('Then') || line.includes('Given') || line.includes('When') || line.includes('And')){
+                const regex = /'(.*?)'/g;
+                let formattedLine = line.replace(regex, '');
+                formattedLine = formattedLine.trim();
 
-            const stepDefinition = this.steps[formattedLine];
+                const stepDefinition = this.steps[formattedLine];
 
-            if(stepDefinition){
-                return new vscode.Location(vscode.Uri.file(stepDefinition.file), new vscode.Position(stepDefinition.line, 0));
+                if(stepDefinition){
+                    return new vscode.Location(vscode.Uri.file(stepDefinition.file), new vscode.Position(stepDefinition.line, 0));
+                }
+
+                return null;
+            }else{
+                return null;
             }
-
-            return null;
-        }else{
-            return null;
         }
+
+        return null;
     }
 
     async getSteps(workspacePath: string): Promise<KeyStep>{

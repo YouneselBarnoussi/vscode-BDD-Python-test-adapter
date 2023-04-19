@@ -24,6 +24,7 @@ The following configuration properties are available
 | Key | Description | Default |
 | ------------- |:-------------:| -----:|
 | behaveTestAdapter.featuresFolderPath | The path of the features folder | ${workspaceFolder}/features
+| behaveTestAdapter.enableDefintionProvider | Whether definition provider will be enabled or not | true
 
 ## Questions, issues, feature requests, and contributions
 

@@ -24,7 +24,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
     context.subscriptions.push(
         vscode.workspace.onDidChangeConfiguration(async (e: vscode.ConfigurationChangeEvent) => {
-            if (e.affectsConfiguration('python')) {
+            if (e.affectsConfiguration('python') || e.affectsConfiguration('behaveTestAdapter')) {
                 controller.items.replace(await loadTests(controller));
             }
         })
