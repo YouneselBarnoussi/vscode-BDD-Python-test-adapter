@@ -6,8 +6,8 @@ import {getInterpreter} from '../../helpers';
 suite('helpers.ts', () => {
     vscode.window.showInformationMessage('Start helpers tests.');
 
-    beforeEach(function() {
-        return vscode.workspace.getConfiguration('python').update('defaultInterpreterPath', undefined, true);
+    beforeEach(async function() {
+        await vscode.workspace.getConfiguration('python').update('defaultInterpreterPath', undefined);
     });
 
     test('It gets interpreter if not defined', async () => {
@@ -19,7 +19,7 @@ suite('helpers.ts', () => {
     test('It gets interpreter if defined', async () => {
         const path = 'my/path';
 
-        await vscode.workspace.getConfiguration('python').update('defaultInterpreterPath', path, true);
+        await vscode.workspace.getConfiguration('python').update('defaultInterpreterPath', path);
 
         const value = getInterpreter();
 
@@ -29,7 +29,7 @@ suite('helpers.ts', () => {
     test('It gets interpreter if defined with workspace variable', async () => {
         const path = '${workspaceFolder}/my/path';
 
-        await vscode.workspace.getConfiguration('python').update('defaultInterpreterPath', path, true);
+        await vscode.workspace.getConfiguration('python').update('defaultInterpreterPath', path);
 
         const value = getInterpreter();
 

@@ -34,7 +34,7 @@
     "rebuild": "npm run clean && npm run build",
     "package": "vsce package",
     "publish": "vsce publish",
-    "pretest": "copyfiles -u 1 ./src/test/suite/support/features/print.feature ./out && npm run build",
+    "pretest": "copyfiles -u 1 ./src/test/suite/support/features/print.feature ./out && copyfiles -u 1 ./src/test/suite/support/.vscode/settings.json ./out && npm run build",
     "test": "node ./out/test/runTests.js",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix"
@@ -68,6 +68,6 @@
     "vscode": "^1.59.0"
   },
   "activationEvents": [
-    "onLanguage:python"
+    "*"
   ]
 }
