@@ -1,13 +1,13 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
+import {getFeaturesFolder, getInterpreter} from './helpers';
 import {ScriptConfiguration} from './scriptConfiguration';
-import {getInterpreter} from './helpers';
 import {runScript} from './processExecution';
 
 export async function loadTests(controller: vscode.TestController): Promise<vscode.TestItem[]> {
     const workspacePath = (vscode.workspace.workspaceFolders || [])[0]?.uri?.fsPath ?? '';
 
-    const loadScriptConfiguration = new ScriptConfiguration([`${getInterpreter()} -m behave`], workspacePath, ['--dry-run'], {shell: process.env.ComSpec});
+    const loadScriptConfiguration = new ScriptConfiguration([`${getInterpreter()} -m behave ${getFeaturesFolder()}`], workspacePath, ['--dry-run'], {shell: process.env.ComSpec});
 
     const result = await runScript(loadScriptConfiguration).complete();
 

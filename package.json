@@ -5,7 +5,7 @@
   "icon": "img/icon.png",
   "author": "Younes el Barnoussi <younes_barnoussi@live.nl>",
   "publisher": "YouneselBarnoussi",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "MIT",
   "homepage": "https://github.com/YouneselBarnoussi/vscode-BDD-Python-test-adapter",
   "repository": {
@@ -24,7 +24,8 @@
     "python",
     "behave",
     "BDD",
-    "Behave Driven Development"
+    "Behave Driven Development",
+    "debug"
   ],
   "main": "out/main.js",
   "scripts": {
@@ -68,6 +69,27 @@
     "vscode": "^1.59.0"
   },
   "activationEvents": [
-    "*"
-  ]
+		"workspaceContains:**/*.feature"
+  ],
+	"extensionDependencies": [
+		"ms-python.python"
+	],
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Test explorer for Python Behave Driven Development",
+      "properties": {
+          "behaveTestAdapter.featuresFolderPath": {
+              "type": "string",
+              "default": "",
+              "description": "The path of the features folder (default: ${workspaceFolder}/features)"
+          },
+          "behaveTestAdapter.enableDefintionProvider": {
+            "type": "boolean",
+            "default": "",
+            "description": "Whether definition provider will be enabled or not"
+        }
+      }
+    }
+  }
 }

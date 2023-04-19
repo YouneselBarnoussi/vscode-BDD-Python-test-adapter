@@ -1,15 +1,13 @@
 import * as vscode from 'vscode';
+import {getFeaturesFolder, getInterpreter} from './helpers';
 import {KeyStep} from './keyStepArray';
 import {ScriptConfiguration} from './scriptConfiguration';
-import {getInterpreter} from './helpers';
 import {runScript} from './processExecution';
 
 export class BehaveDefinitionProvider implements vscode.DefinitionProvider{
-    private loadScriptConfiguration: ScriptConfiguration;
     public steps: KeyStep;
 
     constructor(workspaceUri: vscode.Uri){
-        this.loadScriptConfiguration = new ScriptConfiguration([`${getInterpreter()} -m behave`], undefined, ['--dry-run'], {shell: process.env.ComSpec});
         this.steps = {};
         this.getSteps(workspaceUri?.fsPath ?? '').then((e: KeyStep) => {
             this.steps = e;
@@ -17,27 +15,33 @@ export class BehaveDefinitionProvider implements vscode.DefinitionProvider{
     }
 
     provideDefinition(document: vscode.TextDocument, position: vscode.Position, _token: vscode.CancellationToken): vscode.ProviderResult<vscode.Definition> {
-        const line = document.lineAt(position.line).text.trim();
+        if (vscode.workspace.getConfiguration('behaveTestAdapter').get('enableDefintionProvider', true)) {
+            const line = document.lineAt(position.line).text.trim();
 
-        if(line.includes('Then') || line.includes('Given') || line.includes('When') || line.includes('And')){
-            const regex = /'(.*?)'/g;
-            let formattedLine = line.replace(regex, '');
-            formattedLine = formattedLine.trim();
+            if(line.includes('Then') || line.includes('Given') || line.includes('When') || line.includes('And')){
+                const regex = /'(.*?)'/g;
+                let formattedLine = line.replace(regex, '');
+                formattedLine = formattedLine.trim();
 
-            const stepDefinition = this.steps[formattedLine];
+                const stepDefinition = this.steps[formattedLine];
 
-            if(stepDefinition){
-                return new vscode.Location(vscode.Uri.file(stepDefinition.file), new vscode.Position(stepDefinition.line, 0));
+                if(stepDefinition){
+                    return new vscode.Location(vscode.Uri.file(stepDefinition.file), new vscode.Position(stepDefinition.line, 0));
+                }
+
+                return null;
+            }else{
+                return null;
             }
-
-            return null;
-        }else{
-            return null;
         }
+
+        return null;
     }
 
     async getSteps(workspacePath: string): Promise<KeyStep>{
-        const result = await runScript(this.loadScriptConfiguration).complete();
+        const loadScriptConfiguration = new ScriptConfiguration([`${getInterpreter()} -m behave ${getFeaturesFolder()}`], workspacePath, ['--dry-run'], {shell: process.env.ComSpec});
+
+        const result = await runScript(loadScriptConfiguration).complete();
 
         const {output} = result;
 
