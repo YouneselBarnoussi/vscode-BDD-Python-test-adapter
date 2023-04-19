@@ -5,13 +5,11 @@
       "name": "Run Extension",
       "type": "extensionHost",
       "request": "launch",
+      "sourceMaps": true,
       "runtimeExecutable": "${execPath}",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}"
       ],
-      "outFiles": [
-        "${workspaceFolder}/out"
-      ]
     },
 		{
 			"name": "Run Extension Tests",
@@ -22,8 +20,7 @@
 				"--extensionDevelopmentPath=${workspaceFolder}",
 				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
 			],
-			"outFiles": ["${workspaceFolder}/out/test/**/*.js"],
-			"preLaunchTask": "npm: watch"
+			"preLaunchTask": "npm: pretest"
 		},
   ]
 }
