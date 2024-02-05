@@ -1,5 +1,9 @@
 # Python Behave Test Explorer for Visual Studio Code
 
+![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/YouneselBarnoussi.vscode-behave-test-adapter)
+![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/YouneselBarnoussi.vscode-behave-test-adapter)
+![Visual Studio Marketplace Rating](https://img.shields.io/visual-studio-marketplace/r/YouneselBarnoussi.vscode-behave-test-adapter)
+
 This extension allows you to run Python [Behave](https://github.com/behave/behave) tests in the Visual Studio Code test explorer.
 
 ## Features
