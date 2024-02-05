@@ -5,7 +5,7 @@
   "icon": "img/icon.png",
   "author": "Younes el Barnoussi <younes_barnoussi@live.nl>",
   "publisher": "YouneselBarnoussi",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "license": "MIT",
   "homepage": "https://github.com/YouneselBarnoussi/vscode-BDD-Python-test-adapter",
   "repository": {
