@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import * as vscode from 'vscode';
 import {getFeaturesFolder, getInterpreter} from './helpers';
 import {ScriptConfiguration} from './scriptConfiguration';
@@ -35,8 +36,22 @@ async function runNode(
 
         try {
             const workspacePath = (vscode.workspace.workspaceFolders || [])[0]?.uri?.fsPath ?? '';
+            const envFilePath = vscode.workspace.getConfiguration('python').get<string>('envFile') ?? '';
+            const resolvedEnvFilePath = envFilePath.replace('${workspaceFolder}', workspacePath);
 
-            const runScriptConfiguration = new ScriptConfiguration([`${getInterpreter()} -m behave ${getFeaturesFolder()}`], workspacePath, ['-n'], {shell: process.env.ComSpec});
+            const {env} = process;
+            if (resolvedEnvFilePath && fs.existsSync(resolvedEnvFilePath)) {
+                const envData = fs.readFileSync(resolvedEnvFilePath, 'utf8');
+                const envVars = envData.split('\n');
+                for (const envVar of envVars) {
+                    const [key, value] = envVar.split('=');
+                    if (key && value) {
+                        env[key.trim()] = value.trim();
+                    }
+                }
+            }
+
+            const runScriptConfiguration = new ScriptConfiguration([`${getInterpreter()} -m behave ${getFeaturesFolder()}`], workspacePath, ['-n'], {shell: process.env.ComSpec, env: env});
 
             const testExecution = runScript(runScriptConfiguration, [`"${node.uri?.fsPath}"`.replace(/\\/g, '\\\\'), '-n', `"${node.label}"`]);
             const result = await testExecution.complete();
